@@ -8,15 +8,23 @@ def save_data():
 
     # transform data into dataframe with two columns: date, price (close)
     dates = []
-    prices = []
-    for date in data["Time Series (Daily)"]:
+    open = []
+    high = []
+    low = []
+    close = []
+    volume = []
+    for date in data["Time Series (Digital Currency Daily)"]:
         dates.append(date)
-        prices.append(data["Time Series (Daily)"][date]['4. close'])
-    df = pd.DataFrame({ "date": dates, "price": prices })
+        open.append(data['Time Series (Digital Currency Daily)'][date]['1. open'])
+        high.append(data['Time Series (Digital Currency Daily)'][date]['2. high'])
+        low.append(data['Time Series (Digital Currency Daily)'][date]['3. low'])
+        close.append(data['Time Series (Digital Currency Daily)'][date]['4. close'])
+        volume.append(data['Time Series (Digital Currency Daily)'][date]['5. volume'])
+    df = pd.DataFrame({ "date": dates, "open": open, "low":low, "close":close, "volume":volume })
 
     # connect to Google worksheet
     gc = gspread.service_account(filename="./service_account.json")
-    worksheet = gc.open("<NAME_OF_YOUR_GOOGLE_SPREADSHEET>").sheet1
+    worksheet = gc.open("stock_price").sheet1
 
     # update the Google worksheet
     worksheet.update(values=[df.columns.values.tolist()] + df.values.tolist(), range_name='my_range')
